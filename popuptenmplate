@@ -7,140 +7,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Gramatika:wght@400;700&display=swap');
 
-        body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.5);
-            font-family: Arial, sans-serif;
-        }
-        .popup-container {
-            position: relative;
-            width: 300px;
-            height: 500px;
-            padding: 20px;
-            background: linear-gradient(145deg, #1a1a1a, #343434);
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .popup {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            padding: 20px;
-            background: #2e2e2e;
-            border-radius: 20px;
-            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .popup:before, .popup:after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 20px;
-            background: linear-gradient(145deg, #1a1a1a, #343434);
-            z-index: -1;
-            filter: blur(20px);
-        }
-        .popup .content {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-        }
-        .popup .headline {
-            font-family: 'Gramatika', sans-serif;
-            font-weight: bold;
-            font-size: 24px;
-            margin: 0;
-        }
-        .popup .subheadline {
-            font-family: 'Gramatika', sans-serif;
-            font-weight: normal;
-            font-size: 18px;
-            margin: 0;
-        }
-        .popup .screenshot {
-            width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 2px solid #fff;
-        }
-        .popup .buttons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-        .popup .button {
-            display: flex;
-            align-items: center;
-            background-color: #ffffff;
-            color: #000000;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            text-decoration: none;
-        }
-        .popup .button img {
-            margin-right: 10px;
-            width: 20px;
-        }
-        .popup .close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-        }
-        .corner {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: url('https://example.com/corner.png') no-repeat center center;
-            background-size: contain;
-        }
-        .corner.top-left {
-            top: 0;
-            left: 0;
-            transform: translate(-50%, -50%);
-        }
-        .corner.top-right {
-            top: 0;
-            right: 0;
-            transform: translate(50%, -50%);
-        }
-        .corner.bottom-left {
-            bottom: 0;
-            left: 0;
-            transform: translate(-50%, 50%);
-        }
-        .corner.bottom-right {
-            bottom: 0;
-            right: 0;
-            transform: translate(50%, 50%);
-        }
+        /* Your existing CSS styles */
     </style>
 </head>
 <body>
@@ -152,63 +19,41 @@
                 <div class="subheadline">Congratulations on completing "Pause the Molandak Challenge"</div>
                 <img src="" alt="Screenshot" class="screenshot" id="screenshot">
                 <div class="buttons">
-                    <button class="button twitter-button" onclick="shareOnTwitter()">
-                        <img src="https://img.icons8.com/material-outlined/24/000000/twitter.png" alt="Twitter">
-                        Share
-                    </button>
                     <button class="button screenshot-button" onclick="captureScreenshot()">
                         <img src="https://img.icons8.com/material-outlined/24/000000/camera.png" alt="Screenshot">
                         Capture Screenshot
                     </button>
                 </div>
             </div>
-            <div class="corner top-left"></div>
-            <div class="corner top-right"></div>
-            <div class="corner bottom-left"></div>
-            <div class="corner bottom-right"></div>
         </div>
     </div>
 
-    <!-- Include the html2canvas library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
     <script>
-        const apiKey = 'ENaseRQNMfLEeO8zbx13bWlpX0mfkSKp'; // Web GIF (React Native SDK) key
-
-        // Function to close the popup
         function closePopup() {
             document.getElementById('popup').style.display = 'none';
         }
 
-        // Function to set the headline with a random number between 1 and 200
-        function setHeadline(challengeId) {
-            const headline = document.getElementById('headline');
-            headline.textContent = `Challenge - ID ${challengeId}`;
-            setScreenshot(challengeId); // Update the GIF whenever the ID changes
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
         }
 
-        // Function to set the screenshot with a random congratulations GIF from Giphy
-        function setScreenshot(challengeId) {
-            const apiUrl = `https://api.giphy.com/v1/gifs/search?api_key=${encodeURIComponent(apiKey)}&q=${encodeURIComponent('congratulations')}&limit=50`;
+        function setHeadlineAndScreenshot() {
+            const challengeId = getQueryParam('challengeId');
+            const gifUrl = getQueryParam('gifUrl');
 
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.data.length > 0) {
-                        const index = (challengeId - 1) % data.data.length;
-                        const gifUrl = data.data[index].images.original.url;
-                        const screenshot = document.getElementById('screenshot');
-                        // Append a cache-busting query parameter to ensure the GIF is always fresh
-                        screenshot.src = `${gifUrl}?${new Date().getTime()}`;
-                    } else {
-                        console.error('No GIFs found for the query.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching GIF:', error);
-                });
+            if (challengeId && gifUrl) {
+                const headline = document.getElementById('headline');
+                headline.textContent = `Challenge - ID ${challengeId}`;
+                
+                const screenshot = document.getElementById('screenshot');
+                screenshot.src = `${gifUrl}?${new Date().getTime()}`;
+            } else {
+                console.error('Challenge ID or GIF URL not provided.');
+            }
         }
 
-        // Function to capture screenshot of the popup
         function captureScreenshot() {
             html2canvas(document.querySelector('.popup-container')).then(canvas => {
                 const link = document.createElement('a');
@@ -218,16 +63,7 @@
             });
         }
 
-        // Function to share on Twitter
-        function shareOnTwitter() {
-            const headline = document.getElementById('headline').textContent;
-            const tweetText = `I have completed "Pause the Molandak Challenge" Here is my challenge completion id: ${headline.replace('Challenge - ID ', '')}`;
-            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
-            window.open(url, '_blank');
-        }
-
-        // Set the headline and GIF with a challenge ID (example ID 123)
-        setHeadline(123);
+        setHeadlineAndScreenshot();
     </script>
 </body>
 </html>
