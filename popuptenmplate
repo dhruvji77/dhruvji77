@@ -82,6 +82,28 @@
             border-radius: 10px;
             border: 2px solid #fff;
         }
+        .popup .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .popup .button {
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            color: #000000;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .popup .button img {
+            margin-right: 10px;
+            width: 20px;
+        }
         .popup .close {
             position: absolute;
             top: 10px;
@@ -129,6 +151,16 @@
                 <div class="headline" id="headline">Challenge - ID 123</div>
                 <div class="subheadline">Congratulations on completing "Pause the Molandak Challenge"</div>
                 <img src="" alt="Screenshot" class="screenshot" id="screenshot">
+                <div class="buttons">
+                    <button class="button twitter-button" onclick="shareOnTwitter()">
+                        <img src="https://img.icons8.com/material-outlined/24/000000/twitter.png" alt="Twitter">
+                        Share
+                    </button>
+                    <button class="button screenshot-button" onclick="captureScreenshot()">
+                        <img src="https://img.icons8.com/material-outlined/24/000000/camera.png" alt="Screenshot">
+                        Capture Screenshot
+                    </button>
+                </div>
             </div>
             <div class="corner top-left"></div>
             <div class="corner top-right"></div>
@@ -136,5 +168,66 @@
             <div class="corner bottom-right"></div>
         </div>
     </div>
+
+    <!-- Include the html2canvas library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    <script>
+        const apiKey = 'ENaseRQNMfLEeO8zbx13bWlpX0mfkSKp'; // Web GIF (React Native SDK) key
+
+        // Function to close the popup
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Function to set the headline with a random number between 1 and 200
+        function setHeadline(challengeId) {
+            const headline = document.getElementById('headline');
+            headline.textContent = `Challenge - ID ${challengeId}`;
+            setScreenshot(challengeId); // Update the GIF whenever the ID changes
+        }
+
+        // Function to set the screenshot with a random congratulations GIF from Giphy
+        function setScreenshot(challengeId) {
+            const apiUrl = `https://api.giphy.com/v1/gifs/search?api_key=${encodeURIComponent(apiKey)}&q=${encodeURIComponent('congratulations')}&limit=50`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.data.length > 0) {
+                        const index = (challengeId - 1) % data.data.length;
+                        const gifUrl = data.data[index].images.original.url;
+                        const screenshot = document.getElementById('screenshot');
+                        // Append a cache-busting query parameter to ensure the GIF is always fresh
+                        screenshot.src = `${gifUrl}?${new Date().getTime()}`;
+                    } else {
+                        console.error('No GIFs found for the query.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching GIF:', error);
+                });
+        }
+
+        // Function to capture screenshot of the popup
+        function captureScreenshot() {
+            html2canvas(document.querySelector('.popup-container')).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'popup-screenshot.png';
+                link.click();
+            });
+        }
+
+        // Function to share on Twitter
+        function shareOnTwitter() {
+            const headline = document.getElementById('headline').textContent;
+            const tweetText = `I have completed "Pause the Molandak Challenge" Here is my challenge completion id: ${headline.replace('Challenge - ID ', '')}`;
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+            window.open(url, '_blank');
+        }
+
+        // Set the headline and GIF with a challenge ID (example ID 123)
+        setHeadline(123);
+    </script>
 </body>
 </html>
