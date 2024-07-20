@@ -7,7 +7,113 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Gramatika:wght@400;700&display=swap');
 
-        /* Your existing CSS styles */
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            font-family: Arial, sans-serif;
+        }
+        .popup-container {
+            position: relative;
+            width: 300px;
+            height: 500px;
+            padding: 20px;
+            background: linear-gradient(145deg, #1a1a1a, #343434);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .popup {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            background: #2e2e2e;
+            border-radius: 20px;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .popup:before, .popup:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            background: linear-gradient(145deg, #1a1a1a, #343434);
+            z-index: -1;
+            filter: blur(20px);
+        }
+        .popup .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        .popup .headline {
+            font-family: 'Gramatika', sans-serif;
+            font-weight: bold;
+            font-size: 24px;
+            margin: 0;
+        }
+        .popup .subheadline {
+            font-family: 'Gramatika', sans-serif;
+            font-weight: normal;
+            font-size: 18px;
+            margin: 0;
+        }
+        .popup .screenshot {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #fff;
+        }
+        .popup .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .popup .button {
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            color: #000000;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .popup .button img {
+            margin-right: 10px;
+            width: 20px;
+        }
+        .popup .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -19,9 +125,9 @@
                 <div class="subheadline">Congratulations on completing "Pause the Molandak Challenge"</div>
                 <img src="" alt="Screenshot" class="screenshot" id="screenshot">
                 <div class="buttons">
-                    <button class="button screenshot-button" onclick="captureScreenshot()">
-                        <img src="https://img.icons8.com/material-outlined/24/000000/camera.png" alt="Screenshot">
-                        Capture Screenshot
+                    <button class="button twitter-button" onclick="shareOnTwitter()">
+                        <img src="https://img.icons8.com/material-outlined/24/000000/twitter.png" alt="Twitter">
+                        Share
                     </button>
                 </div>
             </div>
@@ -31,39 +137,44 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
     <script>
         function closePopup() {
-            document.getElementById('popup').style.display = 'none';
+            window.close();
         }
 
-        function getQueryParam(name) {
+        function fetchPopupData() {
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
+            const challengeId = urlParams.get('challengeId');
+            const gifUrl = urlParams.get('gifUrl');
+            
+            document.getElementById('headline').textContent = `Challenge - ID ${challengeId}`;
+            document.getElementById('screenshot').src = `${gifUrl}?${new Date().getTime()}`;
         }
 
-        function setHeadlineAndScreenshot() {
-            const challengeId = getQueryParam('challengeId');
-            const gifUrl = getQueryParam('gifUrl');
+        function shareOnTwitter() {
+            html2canvas(document.querySelector('.popup')).then(canvas => {
+                const img = canvas.toDataURL('image/png');
+                const formData = new FormData();
+                formData.append('image', img);
 
-            if (challengeId && gifUrl) {
-                const headline = document.getElementById('headline');
-                headline.textContent = `Challenge - ID ${challengeId}`;
-                
-                const screenshot = document.getElementById('screenshot');
-                screenshot.src = `${gifUrl}?${new Date().getTime()}`;
-            } else {
-                console.error('Challenge ID or GIF URL not provided.');
-            }
-        }
-
-        function captureScreenshot() {
-            html2canvas(document.querySelector('.popup-container')).then(canvas => {
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png');
-                link.download = 'popup-screenshot.png';
-                link.click();
+                fetch('https://api.imgur.com/3/image', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Client-ID 64af64b46ecab0b'
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const tweetText = `I have completed "Pause the Molandak Challenge"! Check out my screenshot: ${data.data.link}`;
+                    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+                    window.open(url, '_blank');
+                })
+                .catch(error => {
+                    console.error('Error uploading image:', error);
+                });
             });
         }
 
-        setHeadlineAndScreenshot();
+        fetchPopupData();
     </script>
 </body>
 </html>
