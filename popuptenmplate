@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Popup Template</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            font-family: Arial, sans-serif;
+        }
+        .popup-container {
+            position: relative;
+            width: 300px;
+            height: 500px;
+            padding: 20px;
+            background: linear-gradient(145deg, #1a1a1a, #343434);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .popup {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            background: #2e2e2e;
+            border-radius: 20px;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .popup:before, .popup:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            background: linear-gradient(145deg, #1a1a1a, #343434);
+            z-index: -1;
+            filter: blur(20px);
+        }
+        .popup .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        .popup .headline {
+            font-family: 'Gramatika', sans-serif;
+            font-weight: bold;
+            font-size: 24px;
+            margin: 0;
+        }
+        .popup .subheadline {
+            font-family: 'Gramatika', sans-serif;
+            font-weight: normal;
+            font-size: 18px;
+            margin: 0;
+        }
+        .popup .screenshot {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #fff;
+        }
+        .popup .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .corner {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: url('https://example.com/corner.png') no-repeat center center;
+            background-size: contain;
+        }
+        .corner.top-left {
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+        }
+        .corner.top-right {
+            top: 0;
+            right: 0;
+            transform: translate(50%, -50%);
+        }
+        .corner.bottom-left {
+            bottom: 0;
+            left: 0;
+            transform: translate(-50%, 50%);
+        }
+        .corner.bottom-right {
+            bottom: 0;
+            right: 0;
+            transform: translate(50%, 50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="popup-container">
+        <div class="popup" id="popup">
+            <button class="close" onclick="closePopup()">✖</button>
+            <div class="content">
+                <div class="headline" id="headline">Challenge - ID 123</div>
+                <div class="subheadline">Congratulations on completing "Pause the Molandak Challenge"</div>
+                <img src="" alt="Screenshot" class="screenshot" id="screenshot">
+            </div>
+            <div class="corner top-left"></div>
+            <div class="corner top-right"></div>
+            <div class="corner bottom-left"></div>
+            <div class="corner bottom-right"></div>
+        </div>
+    </div>
+</body>
+</html>
