@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Challenge Popup Template</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gramatika:wght@400;700&display=swap');
+
         body {
             margin: 0;
             display: flex;
